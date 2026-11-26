@@ -2,7 +2,7 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const KEY='bashReviewerV1';
-let S={done:[],labs:[],quiz:{},last:null,dark:false,exam:''};
+let S={done:[],labs:[],quiz:{},last:null,dark:false,theme:'',exam:''};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -272,8 +272,8 @@ function revealSol(i){if(!$('#ans'+i).value.trim())return alert('Try writing an 
 function labDone(i,v){S.labs=v?[...new Set([...S.labs,i])]:S.labs.filter(x=>x!==i);save();refreshBar()}
 
 /* ---------- init ---------- */
-function applyTheme(){document.body.classList.toggle('dk',!!S.dark)}
-$('#dark').onclick=()=>{S.dark=!S.dark;save();applyTheme()};
+function applyTheme(){const t=S.theme||(S.dark?'dark':'light');document.body.classList.toggle('dk',t!=='light');document.body.classList.toggle('bk',t==='black');$('#dark').textContent='Theme: '+t[0].toUpperCase()+t.slice(1)+' (click to change)'}
+$('#dark').onclick=()=>{const o=['light','dark','black'],t=S.theme||(S.dark?'dark':'light');S.theme=o[(o.indexOf(t)+1)%3];save();applyTheme()};
 $('#menu').onclick=()=>$('#side').classList.toggle('open');
 $('#search').oninput=buildNav;
 window.addEventListener('hashchange',route);
